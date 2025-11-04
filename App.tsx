@@ -10,13 +10,15 @@ import { AppHeader } from './components/AppHeader';
 import ContactButton from './components/ContactButton';
 import HistoryList from './components/HistoryList';
 import Footer from './components/Footer';
+import { useDebounce } from './hooks/useDebounce';
 
 const App: React.FC = () => {
   const [videosMobile, setVideosMobile] = useState<CloudinaryVideo[]>([]);
   const [videosPC, setVideosPC] = useState<CloudinaryVideo[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('mobile');
   const [selectedVideo, setSelectedVideo] = useState<CloudinaryVideo | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>('');
+  const debouncedSearchTerm = useDebounce(searchInput, 300);
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<CloudinaryVideo[]>([]);
@@ -44,7 +46,7 @@ const App: React.FC = () => {
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
-    setSearchTerm('');
+    setSearchInput('');
     setSelectedVideo(null);
   };
 
@@ -56,9 +58,9 @@ const App: React.FC = () => {
     if (!currentVideoList) return [];
     return currentVideoList.filter(video => {
       const title = video.context?.custom?.caption || video.context?.custom?.alt || video.public_id;
-      return title.toLowerCase().includes(searchTerm.toLowerCase());
+      return title.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
     });
-  }, [currentVideoList, searchTerm]);
+  }, [currentVideoList, debouncedSearchTerm]);
 
   const handleVideoSelect = (video: CloudinaryVideo) => {
     setSelectedVideo(video);
@@ -81,7 +83,7 @@ const App: React.FC = () => {
         >
           <AppHeader />
           <div className="p-4 border-b border-gray-200">
-            <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+            <SearchBar searchTerm={searchInput} onSearchChange={setSearchInput} />
           </div>
           <Tabs activeTab={activeTab} onTabChange={handleTabChange} />
           
