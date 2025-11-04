@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { fetchVideosByTag } from './services/cloudinaryService';
-import { getHistory, addToHistory, clearHistory } from './services/historyService';
+import { getHistory, addToHistory, clearHistory, toggleWatchedStatus } from './services/historyService';
 import type { CloudinaryVideo, TabType } from './types';
 import VideoList from './components/VideoList';
 import VideoPlayer from './components/VideoPlayer';
@@ -77,6 +77,11 @@ const App: React.FC = () => {
     setHistory([]);
   };
 
+  const handleToggleWatched = (publicId: string) => {
+    const updatedHistory = toggleWatchedStatus(publicId);
+    setHistory(updatedHistory);
+  };
+
   return (
     <div className="flex flex-col h-screen font-sans text-gray-800 bg-gray-50">
       <main className="flex flex-1 flex-col md:flex-row overflow-hidden">
@@ -110,6 +115,7 @@ const App: React.FC = () => {
                   onVideoSelect={handleVideoSelect}
                   selectedVideo={selectedVideo}
                   onClearHistory={handleClearHistory}
+                  onToggleWatched={handleToggleWatched}
                 />
                 <VideoList
                   videos={filteredVideos}

@@ -1,4 +1,3 @@
-
 export interface CloudinaryVideo {
   public_id: string;
   format: string;
@@ -9,6 +8,7 @@ export interface CloudinaryVideo {
       alt?: string;
     }
   };
+  watched?: boolean;
 }
 
 export type TabType = 'mobile' | 'pc';

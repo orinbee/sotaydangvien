@@ -6,39 +6,63 @@ interface HistoryListProps {
   onVideoSelect: (video: CloudinaryVideo) => void;
   selectedVideo: CloudinaryVideo | null;
   onClearHistory: () => void;
+  onToggleWatched: (publicId: string) => void;
 }
 
 const HistoryItem: React.FC<{
   video: CloudinaryVideo;
   isSelected: boolean;
   onSelect: () => void;
-}> = ({ video, isSelected, onSelect }) => {
+  onToggleWatched: (publicId: string) => void;
+}> = ({ video, isSelected, onSelect, onToggleWatched }) => {
   const title = video.context?.custom?.caption || video.context?.custom?.alt || video.public_id.replace(/_/g, ' ');
   
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent video selection when toggling watched status
+    onToggleWatched(video.public_id);
+  };
+
   const itemClasses = `
-    w-full p-3 text-left cursor-pointer transition-all duration-200 ease-in-out
-    flex items-center space-x-3 text-sm rounded-md
-    transform hover:translate-x-1 active:scale-[0.98]
-    ${
-      isSelected
-        ? 'bg-red-100 text-red-800 font-semibold'
-        : 'text-gray-600 hover:bg-gray-100'
-    }
+    w-full p-3 text-left transition-all duration-200 ease-in-out
+    flex items-center space-x-3 text-sm rounded-md group
+    ${ isSelected ? 'bg-red-100 text-red-800 font-semibold' : 'text-gray-600 hover:bg-gray-100' }
+    ${ video.watched ? 'opacity-60' : 'opacity-100' }
+  `;
+
+  const buttonClasses = `
+    flex-1 flex items-center space-x-3 cursor-pointer transform 
+    transition-transform duration-200 group-hover:translate-x-1 group-active:scale-[0.98]
   `;
 
   return (
-    <li>
-      <button onClick={onSelect} className={itemClasses}>
+    <li className={itemClasses}>
+      <button onClick={onSelect} className={buttonClasses}>
         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <span className="capitalize truncate">{title}</span>
       </button>
+      <button 
+        onClick={handleToggle} 
+        className="p-1 rounded-full hover:bg-gray-200 transition-colors z-10"
+        aria-label={video.watched ? "Đánh dấu là chưa xem" : "Đánh dấu là đã xem"}
+      >
+        {video.watched ? (
+           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        )}
+      </button>
     </li>
   );
 };
 
-const HistoryList: React.FC<HistoryListProps> = ({ videos, onVideoSelect, selectedVideo, onClearHistory }) => {
+const HistoryList: React.FC<HistoryListProps> = ({ videos, onVideoSelect, selectedVideo, onClearHistory, onToggleWatched }) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   if (videos.length === 0) {
@@ -91,6 +115,7 @@ const HistoryList: React.FC<HistoryListProps> = ({ videos, onVideoSelect, select
               video={video}
               isSelected={selectedVideo?.public_id === video.public_id}
               onSelect={() => onVideoSelect(video)}
+              onToggleWatched={onToggleWatched}
             />
           ))}
         </ul>
