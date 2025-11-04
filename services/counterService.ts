@@ -1,8 +1,8 @@
-const API_URL = 'https://api.countapi.xyz';
-const NAMESPACE = 'stdangvien-huongdan'; // Unique identifier for our counter
-const KEY = 'visits'; // The key for the counter
+// Using a new provider as the previous one might be blocked in the execution environment.
+const API_URL = 'https://counter.dev';
+const NAMESPACE = 'stdangvien-huongdan-app'; // Unique identifier for our counter
 
-interface CountApiResponse {
+interface CounterApiResponse {
   value: number;
 }
 
@@ -21,7 +21,7 @@ const fetchCount = async (url: string): Promise<number | null> => {
       console.error(`Counter API request failed. Status: ${response.status}`);
       return null;
     }
-    const data: CountApiResponse = await response.json();
+    const data: CounterApiResponse = await response.json();
     return data.value;
   } catch (error) {
     // Log network errors (e.g., "Failed to fetch", DNS issues, CORS)
@@ -34,10 +34,10 @@ const fetchCount = async (url: string): Promise<number | null> => {
 
 // Hits the counter and returns the new value
 export const incrementAndGetCount = async (): Promise<number | null> => {
-  return fetchCount(`${API_URL}/hit/${NAMESPACE}/${KEY}`);
+  return fetchCount(`${API_URL}/hit/${NAMESPACE}`);
 };
 
 // Gets the current value of the counter without incrementing
 export const getCount = async (): Promise<number | null> => {
-  return fetchCount(`${API_URL}/get/${NAMESPACE}/${KEY}`);
+  return fetchCount(`${API_URL}/get/${NAMESPACE}`);
 };
