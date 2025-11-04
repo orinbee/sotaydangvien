@@ -42,3 +42,14 @@ export const addToHistory = (video: CloudinaryVideo): CloudinaryVideo[] => {
   }
   return history;
 };
+
+/**
+ * Clears the entire viewing history from localStorage.
+ */
+export const clearHistory = (): void => {
+  try {
+    localStorage.removeItem(HISTORY_KEY);
+  } catch (error) {
+    console.error('Failed to clear history from localStorage', error);
+  }
+};

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { fetchVideosByTag } from './services/cloudinaryService';
-import { getHistory, addToHistory } from './services/historyService';
+import { getHistory, addToHistory, clearHistory } from './services/historyService';
 import type { CloudinaryVideo, TabType } from './types';
 import VideoList from './components/VideoList';
 import VideoPlayer from './components/VideoPlayer';
@@ -72,6 +72,11 @@ const App: React.FC = () => {
     setSelectedVideo(null);
   }
 
+  const handleClearHistory = () => {
+    clearHistory();
+    setHistory([]);
+  };
+
   return (
     <div className="flex flex-col h-screen font-sans text-gray-800 bg-gray-50">
       <main className="flex flex-1 flex-col md:flex-row overflow-hidden">
@@ -104,6 +109,7 @@ const App: React.FC = () => {
                   videos={history}
                   onVideoSelect={handleVideoSelect}
                   selectedVideo={selectedVideo}
+                  onClearHistory={handleClearHistory}
                 />
                 <VideoList
                   videos={filteredVideos}
