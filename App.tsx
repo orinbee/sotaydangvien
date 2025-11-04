@@ -9,6 +9,7 @@ import Tabs from './components/Tabs';
 import { AppHeader } from './components/AppHeader';
 import ContactButton from './components/ContactButton';
 import HistoryList from './components/HistoryList';
+import Footer from './components/Footer';
 
 const App: React.FC = () => {
   const [videosMobile, setVideosMobile] = useState<CloudinaryVideo[]>([]);
@@ -110,6 +111,7 @@ const App: React.FC = () => {
               </>
             )}
           </div>
+          <Footer />
         </div>
 
         {/* Right Panel: Shown on mobile only when a video is selected */}
