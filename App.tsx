@@ -6,6 +6,7 @@ import VideoPlayer from './components/VideoPlayer';
 import SearchBar from './components/SearchBar';
 import Tabs from './components/Tabs';
 import { AppHeader } from './components/AppHeader';
+import ContactButton from './components/ContactButton';
 
 const App: React.FC = () => {
   const [videosMobile, setVideosMobile] = useState<CloudinaryVideo[]>([]);
@@ -33,7 +34,6 @@ const App: React.FC = () => {
         console.error(err);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadVideos();
   }, []);
 
@@ -108,6 +108,7 @@ const App: React.FC = () => {
           <VideoPlayer video={selectedVideo} onBack={handleBackToList} />
         </div>
       </main>
+      <ContactButton />
     </div>
   );
 };
