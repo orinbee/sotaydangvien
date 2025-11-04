@@ -1,36 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { getCount, incrementAndGetCount } from '../services/counterService';
+import { incrementAndGetCount } from '../services/counterService';
 
 const Footer: React.FC = () => {
   const [visitCount, setVisitCount] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchVisitCount = async () => {
-      const sessionKey = 'hasVisitedThisSession';
-      const hasVisited = sessionStorage.getItem(sessionKey);
-      let count: number | null = null;
-
       try {
-        if (!hasVisited) {
-          // If not visited in this session, increment the count
-          count = await incrementAndGetCount();
-          sessionStorage.setItem(sessionKey, 'true');
-        } else {
-          // If already visited, just get the current count
-          count = await getCount();
-        }
-
+        // Luôn tăng bộ đếm trong mỗi lần tải trang để theo dõi tổng số lượt truy cập
+        const count = await incrementAndGetCount();
         if (count !== null) {
           setVisitCount(count);
         }
       } catch (error) {
         console.error("Could not fetch visit count:", error);
-        // Silently fail, don't show an error to the user for this feature
+        // Bỏ qua lỗi một cách âm thầm, không hiển thị cho người dùng
       }
     };
 
     fetchVisitCount();
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []); // Mảng phụ thuộc trống đảm bảo việc này chỉ chạy một lần khi component được gắn kết (tức là mỗi khi trang được tải)
 
   return (
     <div className="p-4 border-t border-gray-200 text-sm text-gray-500">
