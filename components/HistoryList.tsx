@@ -15,8 +15,9 @@ const HistoryItem: React.FC<{
   const title = video.context?.custom?.caption || video.context?.custom?.alt || video.public_id.replace(/_/g, ' ');
   
   const itemClasses = `
-    w-full p-3 text-left cursor-pointer transition-colors duration-200 ease-in-out
+    w-full p-3 text-left cursor-pointer transition-all duration-200 ease-in-out
     flex items-center space-x-3 text-sm rounded-md
+    transform hover:translate-x-1 active:scale-[0.98]
     ${
       isSelected
         ? 'bg-red-100 text-red-800 font-semibold'
