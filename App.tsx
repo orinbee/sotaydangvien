@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { fetchVideosByTag } from './services/cloudinaryService';
+import { getHistory, addToHistory } from './services/historyService';
 import type { CloudinaryVideo, TabType } from './types';
 import VideoList from './components/VideoList';
 import VideoPlayer from './components/VideoPlayer';
@@ -7,6 +8,7 @@ import SearchBar from './components/SearchBar';
 import Tabs from './components/Tabs';
 import { AppHeader } from './components/AppHeader';
 import ContactButton from './components/ContactButton';
+import HistoryList from './components/HistoryList';
 
 const App: React.FC = () => {
   const [videosMobile, setVideosMobile] = useState<CloudinaryVideo[]>([]);
@@ -16,11 +18,13 @@ const App: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [error, setError] = useState<string | null>(null);
+  const [history, setHistory] = useState<CloudinaryVideo[]>([]);
 
   useEffect(() => {
-    const loadVideos = async () => {
+    const loadData = async () => {
       try {
         setStatus('loading');
+        setHistory(getHistory()); // Load history on initial mount
         const [mobileData, pcData] = await Promise.all([
           fetchVideosByTag('stdangvienhuhh'),
           fetchVideosByTag('stdangvienhuhh_pc'),
@@ -34,7 +38,7 @@ const App: React.FC = () => {
         console.error(err);
       }
     };
-    loadVideos();
+    loadData();
   }, []);
 
   const handleTabChange = (tab: TabType) => {
@@ -57,6 +61,8 @@ const App: React.FC = () => {
 
   const handleVideoSelect = (video: CloudinaryVideo) => {
     setSelectedVideo(video);
+    const newHistory = addToHistory(video);
+    setHistory(newHistory);
   };
 
   const handleBackToList = () => {
@@ -90,11 +96,18 @@ const App: React.FC = () => {
               </div>
             )}
             {status === 'success' && (
-              <VideoList
-                videos={filteredVideos}
-                onVideoSelect={handleVideoSelect}
-                selectedVideo={selectedVideo}
-              />
+              <>
+                <HistoryList
+                  videos={history}
+                  onVideoSelect={handleVideoSelect}
+                  selectedVideo={selectedVideo}
+                />
+                <VideoList
+                  videos={filteredVideos}
+                  onVideoSelect={handleVideoSelect}
+                  selectedVideo={selectedVideo}
+                />
+              </>
             )}
           </div>
         </div>
